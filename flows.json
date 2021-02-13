@@ -1,0 +1,306 @@
+[
+    {
+        "id": "bd4d003f.5a6d5",
+        "type": "tab",
+        "label": "Rauchmelder (Smoke Detector Alert)",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "fe1447fe.1c92d8",
+        "type": "mqtt in",
+        "z": "bd4d003f.5a6d5",
+        "name": "",
+        "topic": "home/smokedetector/alert",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "89c47141.2fd35",
+        "x": 170,
+        "y": 253,
+        "wires": [
+            [
+                "4336ccaa.a52924"
+            ]
+        ]
+    },
+    {
+        "id": "9cc51641.d8b748",
+        "type": "mqtt out",
+        "z": "bd4d003f.5a6d5",
+        "name": "",
+        "topic": "home/smokedetector/alert",
+        "qos": "2",
+        "retain": "false",
+        "broker": "89c47141.2fd35",
+        "x": 310,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "4e5a3788.360b48",
+        "type": "debug",
+        "z": "bd4d003f.5a6d5",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 530,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "e7139c9c.bc008",
+        "type": "inject",
+        "z": "bd4d003f.5a6d5",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "on",
+        "payloadType": "str",
+        "x": 130,
+        "y": 80,
+        "wires": [
+            [
+                "9cc51641.d8b748"
+            ]
+        ]
+    },
+    {
+        "id": "60e3c574.60047c",
+        "type": "inject",
+        "z": "bd4d003f.5a6d5",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "off",
+        "payloadType": "str",
+        "x": 130,
+        "y": 120,
+        "wires": [
+            [
+                "9cc51641.d8b748"
+            ]
+        ]
+    },
+    {
+        "id": "1e127685.d90d99",
+        "type": "delay",
+        "z": "bd4d003f.5a6d5",
+        "name": "",
+        "pauseType": "rate",
+        "timeout": "30",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": true,
+        "x": 560,
+        "y": 220,
+        "wires": [
+            [
+                "aeb2ba05.489818"
+            ]
+        ]
+    },
+    {
+        "id": "aeb2ba05.489818",
+        "type": "function",
+        "z": "bd4d003f.5a6d5",
+        "name": "Generate Message",
+        "func": "msg.weekday = global.get(\"gv_now_weekday\");\nmsg.year = global.get(\"gv_now_year\");\nmsg.month = global.get(\"gv_now_month\");\nmsg.day = global.get(\"gv_now_day\");\nmsg.hour = global.get(\"gv_now_hour\");\nmsg.minute = global.get(\"gv_now_minute\");\nmsg.second = global.get(\"gv_now_second\");\nmsg.timestamp = msg.weekday+\", \"+msg.day+\".\"+msg.month+\".\"+msg.year+\" \"+msg.hour+\":\"+msg.minute+\":\"+msg.second;\n\nmsg.payload = {\n    chatId : '-123456789', \n    type : 'message', \n    options : {parse_mode : \"Markdown\"},\n    content: '*BRANDMELDEALARM* \\nRauchmelder hat ausgelöst. \\n'+msg.timestamp+'\\n\\nBitte telefonische Kontaktaufnahme mit Anwohnern und/oder vor Ort nach dem Rechten schauen.'\n};\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 770,
+        "y": 220,
+        "wires": [
+            [
+                "742f5883.a660b8",
+                "9b10b07c.4da2"
+            ]
+        ]
+    },
+    {
+        "id": "9b10b07c.4da2",
+        "type": "telegram sender",
+        "z": "bd4d003f.5a6d5",
+        "name": "SmokeDetectorAlertBot",
+        "bot": "69a3de24.3a6a8",
+        "x": 1010,
+        "y": 260,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "742f5883.a660b8",
+        "type": "file",
+        "z": "bd4d003f.5a6d5",
+        "name": "",
+        "filename": "/var/log/nodered/telegram_smokedetector_alerts.log",
+        "appendNewline": true,
+        "createDir": true,
+        "overwriteFile": "false",
+        "x": 1100,
+        "y": 220,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "8d985b54.a73c78",
+        "type": "comment",
+        "z": "bd4d003f.5a6d5",
+        "name": "Get Chat-ID / Group-ID",
+        "info": "https://api.telegram.org/botxxxx:xxxx/getUpdates\n\n - Input bot-Token\n - Insert bot into group\n - send message inside group\n - refresh url inside browser",
+        "x": 160,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "4336ccaa.a52924",
+        "type": "switch",
+        "z": "bd4d003f.5a6d5",
+        "name": "on/off",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "on",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "off",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 350,
+        "y": 253,
+        "wires": [
+            [
+                "4e5a3788.360b48",
+                "1e127685.d90d99"
+            ],
+            [
+                "7cbe38f6.4ac148",
+                "4e5a3788.360b48"
+            ]
+        ],
+        "outputLabels": [
+            "on",
+            "off"
+        ]
+    },
+    {
+        "id": "7cbe38f6.4ac148",
+        "type": "function",
+        "z": "bd4d003f.5a6d5",
+        "name": "Generate Message",
+        "func": "msg.weekday = global.get(\"gv_now_weekday\");\nmsg.year = global.get(\"gv_now_year\");\nmsg.month = global.get(\"gv_now_month\");\nmsg.day = global.get(\"gv_now_day\");\nmsg.hour = global.get(\"gv_now_hour\");\nmsg.minute = global.get(\"gv_now_minute\");\nmsg.second = global.get(\"gv_now_second\");\nmsg.timestamp = msg.weekday+\", \"+msg.day+\".\"+msg.month+\".\"+msg.year+\" \"+msg.hour+\":\"+msg.minute+\":\"+msg.second;\n\nmsg.payload = {\n    chatId : '-123456789', \n    type : 'message',\n    options : {parse_mode : \"Markdown\"},\n    content: '*ALARM BESTAETIGT* \\nRauchmelder zurückgesetzt. \\n'+msg.timestamp+'\\n\\nDer Alarm wurde vor Ort von Anwohnern quittiert, es besteht kein Handlungsbedarf mehr.'\n};\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 770,
+        "y": 260,
+        "wires": [
+            [
+                "742f5883.a660b8",
+                "9b10b07c.4da2"
+            ]
+        ]
+    },
+    {
+        "id": "89c47141.2fd35",
+        "type": "mqtt-broker",
+        "z": "",
+        "name": "mqtt.domain.de",
+        "broker": "mqtt.domain.de",
+        "port": "8883",
+        "tls": "dab1e87b.a61058",
+        "clientid": "nodered-client",
+        "usetls": true,
+        "compatmode": true,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": ""
+    },
+    {
+        "id": "69a3de24.3a6a8",
+        "type": "telegram bot",
+        "z": "",
+        "botname": "SmokeDetectorAlertBot",
+        "usernames": "",
+        "chatids": "-123456789",
+        "baseapiurl": "",
+        "updatemode": "polling",
+        "pollinterval": "300",
+        "usesocks": false,
+        "sockshost": "",
+        "socksport": "6667",
+        "socksusername": "anonymous",
+        "sockspassword": "",
+        "bothost": "",
+        "localbotport": "8443",
+        "publicbotport": "8443",
+        "privatekey": "",
+        "certificate": "",
+        "useselfsignedcertificate": false,
+        "sslterminated": false,
+        "verboselogging": false
+    },
+    {
+        "id": "dab1e87b.a61058",
+        "type": "tls-config",
+        "z": "",
+        "name": "",
+        "cert": "",
+        "key": "",
+        "ca": "",
+        "certname": "",
+        "keyname": "",
+        "caname": "",
+        "servername": "",
+        "verifyservercert": false
+    }
+]
