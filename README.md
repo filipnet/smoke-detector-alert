@@ -4,6 +4,8 @@
 
 Tapping of a potential-free relay contact of a smoke detector, alarm via MQTT and finally Telegram notification
 
+> **⚠ WARNING, IMPORTANT NOTICE BEFORE USE**  
+> I do not use this project myself, even if it sounds funny. Actually, when replacing the existing smoke detectors after 10 years, it should be radio-networked EI Electronics Ei650RF smoke detectors, which signal an alarm via the relay module Ei428 and are polled by an Arduino. What was initially the solution, has presented itself in the procurement as an unsolvable problem, since the specialized trade could not supply this product with factory-installed battery, the offered Ei650iW + radio module with 11 detectors would have blown up the cost frame. In the end, I decided to use a Z-Wave solution from a competitor, but I would still like to make this project and its code available to the community.
 
 <!-- TOC -->
 
@@ -12,7 +14,6 @@ Tapping of a potential-free relay contact of a smoke detector, alarm via MQTT an
     - [REQUIREMENTS](#requirements)
     - [INSTALL AND USAGE](#install-and-usage)
         - [PINOUT](#pinout)
-        - [SMOKE DETECTOR](#smoke-detector)
         - [LIBRARIES](#libraries)
     - [DIRECTORIES AND FILES](#directories-and-files)
     - [AUTOMATION WITH NODE-RED](#automation-with-node-red)
@@ -33,7 +34,7 @@ Tapping of a potential-free relay contact of a smoke detector, alarm via MQTT an
 
 ## REQUIREMENTS
 
-- A smoke detector
+- A smoke detector relay module
 - Wemos D1 Mini (should work with other Arduino microcontrollers using a WiFi module too)
 - WiFi infrastructure and Internet connection
 - Visual Studio Code + PlatformIO or Arduino IDE (for Arduino IDE you have to move files from /src to root-folder)
@@ -61,9 +62,8 @@ Note: It is certainly also possible to send Telegram messages directly from the 
 
 <img src="images/smoke-detector-alert-circuit.png" alt="smoke-detector-alert circuit" width="850"/>
 
-### SMOKE DETECTOR
-
-To be done
+> **⚠ Note**  
+> This diagram is only exemplary, it should be in the implementation of a real relay module that opens only in case of alarm. If you try to tap a smoke detector directly, e.g. via the piezzo, you should be aware that it not only emits pulses when there is an alarm, but also when the battery is empty, other detectors in the group have a problem, connectivity is no longer available, and much more. This would of course need to be included in the logic of code and intercepted.
 
 ### LIBRARIES ###
 
